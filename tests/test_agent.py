@@ -4,6 +4,7 @@ import os
 import sys
 import tempfile
 import unittest
+from contextlib import closing
 from pathlib import Path
 from unittest.mock import patch
 
@@ -24,6 +25,7 @@ class ExcelAgentTests(unittest.TestCase):
         for row in (("月份", "销售额"), ("一月", 10), ("一月", 20), ("二月", 5)):
             sheet.append(row)
         book.save(path)
+        book.close()
         return path
 
     def test_agent_uses_mcp_and_creates_summary_only_after_approval(self):
@@ -74,10 +76,11 @@ class ExcelAgentTests(unittest.TestCase):
             self.assertEqual(source.read_bytes(), original)
             output = Path(folder) / "sales-DeskPaw汇总.xlsx"
             self.assertTrue(output.exists())
-            self.assertEqual(
-                list(load_workbook(output, read_only=True).active.values),
-                [("月份", "销售额的合计"), ("一月", 30), ("二月", 5)],
-            )
+            with closing(load_workbook(output, read_only=True)) as generated:
+                self.assertEqual(
+                    list(generated.active.values),
+                    [("月份", "销售额的合计"), ("一月", 30), ("二月", 5)],
+                )
             self.assertTrue(model.call_args_list[0].args[4])
             self.assertEqual(len(model.call_args_list[-1].args), 4)
 
@@ -238,7 +241,7 @@ for line in sys.stdin:
             self.assertIn("notes.docx", approvals[0])
             self.assertIn("created", model.call_args_list[-1].args[3][-1]["content"])
             self.assertIn("secret=None", model.call_args_list[-1].args[3][-1]["content"])
-            self.assertIn(str(document), model.call_args_list[0].args[3][0]["content"])
+            self.assertIn(str(document.resolve()), model.call_args_list[0].args[3][0]["content"])
 
     def test_denied_external_tool_does_not_run(self):
         with tempfile.TemporaryDirectory() as folder:

@@ -1,3 +1,4 @@
-PySide6>=6.8,<7
+# Avoid the 6.12.0 reference-count regression (PYSIDE-3474).
+PySide6==6.11.2
 openpyxl>=3.1,<4
 mcp>=2.0,<3

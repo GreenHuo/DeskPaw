@@ -123,7 +123,7 @@ class CoreTests(unittest.TestCase):
             self.assertEqual(Settings.load(path).scale, 120)
             self.assertFalse(Settings.load(path).ambient_chatter)
             self.assertFalse(Settings.load(path).effects)
-            self.assertNotIn("api_key", path.read_text())
+            self.assertNotIn("api_key", path.read_text(encoding="utf-8"))
             path.write_text('{"scale":"bad","idle_seconds":"bad"}')
             self.assertEqual(Settings.load(path).scale, 42)
             self.assertTrue(Settings.load(path).effects)
@@ -139,7 +139,7 @@ class CoreTests(unittest.TestCase):
                 (server.name, server.command, server.args, server.enabled),
                 ("文档工具", "python", ["-m", "doc_mcp"], True),
             )
-            self.assertNotIn("api_key", path.read_text())
+            self.assertNotIn("api_key", path.read_text(encoding="utf-8"))
             with self.assertRaises(ValueError):
                 Settings(mcp_servers=[MCPServerConfig("坏参数", "python", "-m doc_mcp")]).save(path)
 
@@ -172,7 +172,7 @@ class CoreTests(unittest.TestCase):
             self.assertIn("action", prompt)
             self.assertIn("JSON", prompt)
             self.assertIn("当前心情 70/100", prompt)
-            self.assertNotIn("api_key", path.read_text())
+            self.assertNotIn("api_key", path.read_text(encoding="utf-8"))
 
     def test_deepseek_key_not_sent_to_other_host(self):
         with patch.dict(os.environ, {"DEEPSEEK_API_KEY": "deepseek-only"}, clear=True):
