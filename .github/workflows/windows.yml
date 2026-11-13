@@ -1,0 +1,34 @@
+name: Windows application
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/windows-*', 'codex/windows-*']
+    tags: ['v*']
+  pull_request:
+    paths: ['deskpaw/**', 'tests/**', 'packaging/**', 'scripts/build-windows.ps1', '.github/workflows/windows.yml', 'requirements.txt', 'pyproject.toml']
+permissions:
+  contents: read
+jobs:
+  windows-x64:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - name: Test and package Windows application and installer
+        shell: pwsh
+        run: ./scripts/build-windows.ps1
+      - name: Upload Windows installer and portable executable
+        uses: actions/upload-artifact@v7
+        with:
+          name: DeskPaw-Windows-x64
+          path: |
+            dist/DeskPaw.exe
+            dist/DeskPaw-Setup-x64.exe
+            dist/DeskPaw-Windows-x64.zip
+            dist/windows-self-test.json
+            dist/windows-installer-self-test.json
+          if-no-files-found: error
