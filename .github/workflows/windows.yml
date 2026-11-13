@@ -21,14 +21,23 @@ jobs:
       - name: Test and package Windows application and installer
         shell: pwsh
         run: ./scripts/build-windows.ps1
-      - name: Upload Windows installer and portable executable
+      - name: Upload Windows installer
         uses: actions/upload-artifact@v7
         with:
-          name: DeskPaw-Windows-x64
+          name: DeskPaw-Installer-x64
+          path: dist/DeskPaw-Setup-x64.exe
+          if-no-files-found: error
+      - name: Upload portable Windows application
+        uses: actions/upload-artifact@v7
+        with:
+          name: DeskPaw-Portable-x64
+          path: dist/DeskPaw-Windows-x64.zip
+          if-no-files-found: error
+      - name: Upload Windows verification reports
+        uses: actions/upload-artifact@v7
+        with:
+          name: DeskPaw-Windows-verification
           path: |
-            dist/DeskPaw.exe
-            dist/DeskPaw-Setup-x64.exe
-            dist/DeskPaw-Windows-x64.zip
             dist/windows-self-test.json
             dist/windows-installer-self-test.json
           if-no-files-found: error

@@ -13,10 +13,40 @@ from PySide6.QtGui import (
 
 from deskpaw.pet.ball import BallWindow
 from deskpaw.pet.toys import LightWindow, SnackWindow
+from deskpaw.ui.gomoku import GomokuDialog
 
 
 class PetGamesMixin:
     """Internal behavior of PetWindow; state and Qt lifetime belong to the window."""
+
+    def start_gomoku_game(self) -> None:
+        if self.game_mode == "gomoku" and self.gomoku is not None:
+            self.gomoku.raise_()
+            self.gomoku.activateWindow()
+            return
+        if not self._prepare_game():
+            return
+        if self.gomoku is None:
+            self.gomoku = GomokuDialog(self)
+            self.gomoku.finished.connect(self._gomoku_closed)
+        self.gomoku.reset()
+        self.game_mode = "gomoku"
+        self._interact("look")
+        self.gomoku.show()
+        bounds = self.game_bounds
+        self.gomoku.resize(
+            min(self.gomoku.width(), bounds.width()),
+            min(self.gomoku.height(), bounds.height()),
+        )
+        self.gomoku.move(bounds.center() - self.gomoku.rect().center())
+        self.gomoku.raise_()
+        self.gomoku.activateWindow()
+        self.controls_changed.emit()
+        self.say("一起下五子棋吧！你执黑先走。", 3)
+
+    def _gomoku_closed(self) -> None:
+        if self.game_mode == "gomoku":
+            self.stop_game()
 
     def start_fetch_game(self, kind: str = "ball") -> None:
         if not self._prepare_game():
@@ -105,6 +135,8 @@ class PetGamesMixin:
 
     def _cancel_game(self) -> None:
         self.game_mode = "off"
+        if self.gomoku is not None:
+            self.gomoku.stop()
         if self.ball is not None:
             self.ball.hide()
         if self.light is not None:
@@ -278,6 +310,8 @@ class PetGamesMixin:
             self.game_mode = "snack_wait"
 
     def _update_game(self, now: float, dt: float) -> None:
+        if self.game_mode == "gomoku":
+            return
         if self.game_mode == "light":
             self._update_light(now, dt)
             return

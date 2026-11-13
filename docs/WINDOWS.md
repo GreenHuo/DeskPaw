@@ -31,7 +31,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build-windows.ps1
 
 ## 使用 GitHub Actions
 
-项目包含 `.github/workflows/windows.yml`。推送到 `build/windows-*` 或 `codex/windows-*` 分支会自动构建；工作流进入主分支后，也可在仓库 Actions 页面选择 **Windows application → Run workflow**。完成后下载 **DeskPaw-Windows-x64** 产物，其中同时包含安装程序和免安装程序。工作流会在 Windows 2022 x64 环境中执行同一个打包脚本。
+项目包含 `.github/workflows/windows.yml`。推送到 `build/windows-*` 或 `codex/windows-*` 分支会自动构建；工作流进入主分支后，也可在仓库 Actions 页面选择 **Windows application → Run workflow**。完成后分别下载 **DeskPaw-Installer-x64** 安装程序或 **DeskPaw-Portable-x64** 免安装版；**DeskPaw-Windows-verification** 包含启动检查报告。工作流会在 Windows 2022 x64 环境中执行同一个打包脚本。
 
 ## 构建与验证边界
 

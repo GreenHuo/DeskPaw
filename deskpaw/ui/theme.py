@@ -135,6 +135,14 @@ def icon(name: str, color: str = "#9b623c", size: int = 22) -> QIcon:
             (17, 7, 19, 5),
         ):
             line(*coords)
+    elif name == "gomoku":
+        for offset in (5, 12, 19):
+            line(3, offset, 21, offset)
+            line(offset, 3, offset, 21)
+        p.setBrush(QColor(color))
+        p.drawEllipse(QRectF(8.5, 8.5, 7, 7))
+        p.setBrush(QColor("#fffdf9"))
+        p.drawEllipse(QRectF(15.5, 1.5, 7, 7))
     elif name == "snack":
         p.drawRoundedRect(QRectF(5, 5, 14, 15), 3, 3)
         p.drawEllipse(QRectF(5, 3, 14, 5))

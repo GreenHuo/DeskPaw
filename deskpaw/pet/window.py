@@ -23,6 +23,7 @@ from deskpaw.pet.toys import LightWindow, SnackWindow
 from deskpaw.platform.surfaces import WindowProvider, WindowSurface
 from deskpaw.services.ai import ChatResponse
 from deskpaw.ui.chat import ChatDialog
+from deskpaw.ui.gomoku import GomokuDialog
 from deskpaw.ui.settings import SettingsDialog
 from deskpaw.ui.theme import STYLE, add_action, icon
 
@@ -98,6 +99,7 @@ class PetWindow(PetAnimationMixin, PetPlacementMixin, PetGamesMixin, QWidget):
         self.ball: BallWindow | None = None
         self.light: LightWindow | None = None
         self.snacks: SnackWindow | None = None
+        self.gomoku: GomokuDialog | None = None
         self.toy_kind = "ball"
         self.game_until = 0.0
         self.light_catches = 0
@@ -545,6 +547,7 @@ class PetWindow(PetAnimationMixin, PetPlacementMixin, PetGamesMixin, QWidget):
             ("接飞盘", "frisbee", lambda: self.start_fetch_game("frisbee")),
             ("追光点", "light", self.start_light_game),
             ("找零食", "snack", self.start_snack_game),
+            ("五子棋", "gomoku", self.start_gomoku_game),
         ):
             add_action(games, title, symbol, callback).setEnabled(not blocked)
         games.addSeparator()

@@ -111,6 +111,7 @@ class ControlDialog(QDialog):
                 ),
                 ("追光点", "light", "跟着你的鼠标跑", pet.start_light_game),
                 ("找零食", "snack", "猜猜零食藏在哪", pet.start_snack_game),
+                ("五子棋", "gomoku", "你执黑，与柯基对弈", pet.start_gomoku_game),
             )
         ):
             button = QPushButton()
